@@ -8,17 +8,6 @@ import { ApolloContext } from '@/types/apollo'
 import { getUser } from './utils'
 import { db } from './firebase'
 
-// サンプルデータの定義
-const books = [
-  {
-    title: 'The Awakeningasdf',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-]
 
 // スキーマの定義
 const schema = loadSchemaSync(join(__dirname, '../schema.graphql'), {
