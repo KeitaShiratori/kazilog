@@ -1,24 +1,16 @@
 <template lang="pug">  
 v-container(fill-height)
-  Hero
+  PagesIndexHero
   .container
-    GuestContents(v-if="!this.isAuthenticated")
-    UserContents(v-else)
+    PagesIndexGuestContents(v-if="!this.isAuthenticated")
+    PagesIndexUserContents(v-else)
 
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import Hero from '@/components/blocks/index/Hero'
-import GuestContents from '@/components/blocks/index/GuestContents'
-import UserContents from '@/components/blocks/index/UserContents'
 
 export default {
-  components: {
-    Hero,
-    GuestContents,
-    UserContents
-  },
   data() {
     return {}
   },

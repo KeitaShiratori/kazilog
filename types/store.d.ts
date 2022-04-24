@@ -5,8 +5,3 @@ export type AuthState = {
   uid: string | null
   user: UserInfo | null
 }
-
-export type Book = {
-  title: string
-  author: string
-}

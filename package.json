@@ -12,7 +12,8 @@
     "lint:prettier": "prettier --check .",
     "lint": "yarn lint:js && yarn lint:prettier",
     "lintfix": "prettier --write --list-different . && yarn lint:js --fix",
-    "test": "jest"
+    "test": "jest",
+    "pre-debug": "Remove-Item .nuxt"
   },
   "dependencies": {
     "@nuxtjs/apollo": "^4.0.1-rc.5",

@@ -1,0 +1,20 @@
+subscription timelineDone($timelineId: String!) {
+  timeline(timelineId: $timelineId) {
+    id
+    familyId
+    kazi {
+      id
+      categoryId
+      familyId
+      name
+      point
+      repeat {
+        type
+        activatedAt
+      }
+    }
+    uid
+    doneAt
+    memo
+  }
+}

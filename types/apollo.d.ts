@@ -4,9 +4,3 @@ export interface ApolloContext {
   req: any
   user: UserRecord
 }
-
-export interface Auth {
-  id: string
-  admin: boolean
-  [key: string]: any
-}
