@@ -1,12 +1,13 @@
-query timelinesDefault($date: String!) {
-  timelinesDoneToday(date: $date) {
+query timelinesDoneToday {
+  timelinesDoneToday {
     # timeline.doneAt が 過去日の家事が本日の実施した家事
     id
-    familyId
     kazi {
       id
-      categoryId
-      familyId
+      category{
+        id
+        name
+      }
       name
       point
       repeat {
@@ -14,15 +15,20 @@ query timelinesDefault($date: String!) {
         activatedAt
       }
     }
-    uid
+    user{
+      uid
+      name
+    }
     doneAt
     memo
   }
-  kazisRemainedToday(date: $date) {
-    # kazi.repeat.activvatedAt が 過去日の家事が本日の残りの家事
+  kazisRemainedToday {
+    # kazi.repeat.activatedAt が 過去日の家事が本日の残りの家事
     id
-    categoryId
-    familyId
+    category{
+      id
+      name
+    }
     name
     point
     repeat {

@@ -3,11 +3,24 @@ import { loadSchemaSync } from '@graphql-tools/load'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { addResolversToSchema } from '@graphql-tools/schema'
 import { join } from 'path'
-import { Resolvers, User } from '@/types/generated/graphql'
+import {
+  Category,
+  Family,
+  Kazi,
+  Repeat,
+  Resolvers,
+  Timeline,
+  User,
+} from '@/types/generated/graphql'
 import { ApolloContext } from '@/types/apollo'
 import { getUser } from './utils'
 import { db } from './firebase'
-import { DocumentData, DocumentReference } from 'firebase/firestore'
+import {
+  CollectionReference,
+  DocumentData,
+  DocumentReference,
+  QuerySnapshot,
+} from 'firebase/firestore'
 
 // スキーマの定義
 const schema = loadSchemaSync(join(__dirname, '../schema.graphql'), {
@@ -42,6 +55,68 @@ const resolvers: Resolvers = {
       family.users = userNames
       family.id = familyRef.id
       return family
+    },
+    timelinesDoneToday: async (_parent: any, _args: any, _context: any) => {
+      const uid = _context?.user?.uid
+      const doc = await db.collection('users').doc(uid).get()
+
+      const user = doc.data() as User
+      const familyRef = user.family as DocumentData
+
+      // const { familyId, datetime } = _args
+      const familyId = familyRef.id
+
+      const timelineRef = await db
+        .collection('timeline')
+        .where('familyId', '==', familyId)
+        .get()
+
+      return timelineRef.docs.reduce(async (ret: any, doc) => {
+        const kazi = (await (doc.data().kazi as DocumentData).get()).data()
+        ret.push({
+          id: doc.id,
+          kazi: {
+            id: doc.data().kazi.id,
+            category: {
+              id: kazi.categoryId,
+              name: (await kazi.category.get()).data().name,
+            },
+            name: kazi.name,
+            point: kazi.point,
+            repeat: kazi.repeat,
+          },
+          user: (await doc.data().user.get()).data().name,
+          memo: doc.data().memo,
+          doneAt: doc.data().doneAt,
+        })
+        return ret
+      }, [] as Timeline[])
+    },
+    kazisRemainedToday: async (_parent: any, _args: any, _context: any) => {
+      const uid = _context?.user?.uid
+      const doc = await db.collection('users').doc(uid).get()
+
+      const user = doc.data() as User
+      const familyRef = user.family as DocumentData
+
+      // const { familyId, datetime } = _args
+      const familyId = familyRef.id
+
+      const kaziRef = await db
+        .collection('kazi')
+        .where('familyId', '==', familyId)
+        .get()
+
+      return kaziRef.docs.map(async (doc) => ({
+        id: doc.id,
+        category: {
+          id: doc.data().categoryId,
+          name: (await doc.data().category.get()).data().name,
+        },
+        name: doc.data().name,
+        point: doc.data().point,
+        repeat: doc.data().repeat,
+      }))
     },
   },
 }

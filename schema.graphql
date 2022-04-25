@@ -1,49 +1,46 @@
 type Query {
-  family: Family!,
+  family: Family
+  timelinesDoneToday: [Timeline]
+  kazisRemainedToday: [Kazi]
 }
 
 type Category {
-  id: String!
-  family: Family!
-  name: String!
+  id: String
+  name: String
 }
 
 type Family {
-  id: String!
-  name: String!
-  users: [User!]!
+  id: String
+  name: String
+  users: [User]
 }
 
 type Kazi {
-  id: String!
-  family: Family!
-  category: Category!
-  name: String!
-  point: Int!
-  repeat: Repeat!
+  id: String
+  familyId: String
+  family: Family
+  categoryId: String
+  category: Category
+  name: String
+  point: Int
+  repeat: Repeat
 }
 
 type Repeat {
-  type: String!
-  activatedAt: String!
+  type: String
+  activatedAt: String
 }
 
 type Timeline {
-  id: String!
-  family: Family!
-  kazi: Kazi!
-  user: User!
-  doneAt: Timestamp!
-  memo: String!
+  id: String
+  kazi: Kazi
+  user: User
+  doneAt: String
+  memo: String
 }
 
 type User {
-  uid: String!
-  name: String!
-  family: Family!
-}
-
-type Timestamp {
-  seconds: Int!
-  nanoseconds: Int!
+  uid: String
+  name: String
+  family: Family
 }
