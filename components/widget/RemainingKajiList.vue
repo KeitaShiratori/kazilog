@@ -8,33 +8,34 @@ v-card.mx-auto
     v-btn(icon)
       v-icon mdi-checkbox-marked-circle
   v-list(two-line)
-    v-list-item {{ timelinesDoneToday }}
-    v-list-item {{ kazisRemainedToday }}
     v-list-item-group(v-model="selected", active-class="blue--text", multiple)
-      template(v-for="(item, idx) in items")
-        v-list-item(:key="item.id")
+      template(v-for="(item, idx) in kazisToday")
+        v-list-item(:key="item.id" @click="doneKazi(item.id)")
           template(v-slot:default="{ active }")
             v-list-item-avatar
-              v-img(:alt="item.name" :src="item.img")
+              v-img(:alt="item.name" :src="item.img || 'noimage.png'")
             v-list-item-content
               v-list-item-title(v-text="item.name")
               v-list-item-subtitle(v-text="item.category.name").text--primary
               v-list-item-subtitle(v-text="item.memo")
             v-list-item-action
-              v-list-item-action-text(v-text="item.displayDatetime")
+              v-list-item-action-text(v-text="dispDate(item, 'hh:mm')")
               v-checkbox(:input-value="active" color="primary")
-        v-divider(v-if="idx < items.length - 1" :key="idx")
+        v-divider(v-if="idx < kazisToday.length - 1" :key="idx")
+    //- v-list-item {{ kazisToday }}
+    //- v-list-item {{ selected }}
 </template>
 
 <script lang="ts">
 import 'vue-apollo'
-import remainingKaziGql from '@/apollo/queries/remainingKazi.gql'
-import { Query } from '@/types/generated/graphql'
+import QKazisTodayGql from '@/apollo/queries/kazisToday.gql'
+import MDoneKaziGql from '@/apollo/mutations/doneKazi.gql'
+import { DispKazi } from '@/types/generated/graphql'
+import { dateFormat } from '@/utils/myutil'
 
 interface Data {
-  timelinesDoneToday?: Query
-  selected: Array<boolean>
-  items: Array<any>
+  kazisToday: DispKazi[]
+  selected: Array<Number>
 }
 
 export default {
@@ -43,69 +44,40 @@ export default {
   data(): Data {
     return {
       selected: [],
-      items: [
-        {
-          id: 1001,
-          img: 'noimage.png',
-          name: '夕飯作り',
-          category: {
-            id: 2001,
-            name: '料理',
-          },
-          displayDatetime: '17:00',
-        },
-        {
-          id: 1002,
-          img: 'noimage.png',
-          name: '買い出し',
-          category: {
-            id: 2001,
-            name: '料理',
-          },
-          displayDatetime: '14:00',
-        },
-        {
-          id: 1003,
-          img: 'noimage.png',
-          name: '洗濯機回す',
-          category: {
-            id: 2002,
-            name: '洗濯',
-          },
-          displayDatetime: '07:00',
-        },
-        {
-          id: 1004,
-          img: 'noimage.png',
-          name: '洗濯ものたたむ',
-          category: {
-            id: 2002,
-            name: '洗濯',
-          },
-          displayDatetime: '09:00',
-        },
-        {
-          id: 1005,
-          img: 'noimage.png',
-          name: '掃除機かけ',
-          category: {
-            id: 2003,
-            name: '掃除',
-          },
-          displayDatetime: '09:17',
-          memo: 'やりました',
-        },
-      ],
+      kazisToday: [],
     }
   },
   apollo: {
-    timelinesDoneToday: {
+    kazisToday: {
       prefetch: true,
-      query: remainingKaziGql,
+      query: QKazisTodayGql,
     },
-    kazisRemainedToday: {
+    selected: {
       prefetch: true,
-      query: remainingKaziGql,
+      query: QKazisTodayGql,
+      update: (data: { kazisToday: DispKazi[] }) => {
+        return data.kazisToday.reduce((ret, dat, idx) => {
+          if (!!dat.user) ret.push(idx)
+          return ret
+        }, [] as Number[])
+      },
+    },
+  },
+  methods: {
+    dispDate(item: DispKazi, format: String): String {
+      const date = item.doneAt
+        ? new Date(item.doneAt)
+        : new Date(item.repeat?.activatedAt ?? 0)
+      return dateFormat(date, format)
+    },
+    async doneKazi(kaziId: String) {
+      // @ts-ignore
+      await this.$apollo.mutate({
+        mutation: MDoneKaziGql,
+        variables: {
+          kaziId: kaziId,
+        },
+      })
     },
   },
 }

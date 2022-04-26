@@ -2,6 +2,11 @@ type Query {
   family: Family
   timelinesDoneToday: [Timeline]
   kazisRemainedToday: [Kazi]
+  kazisToday: [DispKazi]
+}
+
+type Mutation {
+  doneKazi: Timeline
 }
 
 type Category {
@@ -26,16 +31,30 @@ type Kazi {
   repeat: Repeat
 }
 
+type DispKazi {
+  id: String
+  familyId: String
+  family: Family
+  categoryId: String
+  category: Category
+  name: String
+  point: Int
+  repeat: Repeat
+  user: User
+  doneAt: Float
+  memo: String
+}
+
 type Repeat {
   type: String
-  activatedAt: String
+  activatedAt: Float
 }
 
 type Timeline {
   id: String
   kazi: Kazi
   user: User
-  doneAt: String
+  doneAt: Float
   memo: String
 }
 

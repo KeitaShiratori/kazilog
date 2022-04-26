@@ -1,0 +1,12 @@
+mutation DoneKazi($kaziId: String) {
+  doneKazi(input: $kaziId) {
+    kazi{
+      id
+    }
+    user {
+      uid
+      name
+    }
+    doneAt
+  }
+}
