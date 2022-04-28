@@ -1,10 +1,7 @@
 <template lang="pug">  
 v-container(fill-height)
-  PagesIndexHero
-  .container
-    PagesIndexGuestContents(v-if="!this.isAuthenticated")
-    PagesIndexUserContents(v-else)
-
+  PagesIndexGuestContents(v-if="!this.isAuthenticated")
+  PagesIndexUserContents(v-else)
 </template>
 
 <script>

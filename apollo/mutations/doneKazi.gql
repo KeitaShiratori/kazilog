@@ -1,5 +1,6 @@
-mutation DoneKazi($kaziId: String) {
-  doneKazi(input: $kaziId) {
+mutation DoneKazi($kaziId: ID) {
+  doneKazi(kaziId: $kaziId) {
+    id
     kazi{
       id
     }

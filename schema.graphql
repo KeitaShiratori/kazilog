@@ -1,3 +1,5 @@
+scalar Void 
+
 type Query {
   family: Family
   timelinesDoneToday: [Timeline]
@@ -6,25 +8,32 @@ type Query {
 }
 
 type Mutation {
-  doneKazi: Timeline
+  doneKazi(kaziId: ID): Timeline
+  updateTimeline(
+    id: ID
+    memo: String
+    uid: ID
+    userName: String
+    doneAt: String
+  ): Void
 }
 
 type Category {
-  id: String
+  id: ID
   name: String
 }
 
 type Family {
-  id: String
+  id: ID
   name: String
   users: [User]
 }
 
 type Kazi {
-  id: String
-  familyId: String
+  id: ID
+  familyId: ID
   family: Family
-  categoryId: String
+  categoryId: ID
   category: Category
   name: String
   point: Int
@@ -32,34 +41,35 @@ type Kazi {
 }
 
 type DispKazi {
-  id: String
-  familyId: String
+  id: ID
+  familyId: ID
   family: Family
-  categoryId: String
+  categoryId: ID
   category: Category
   name: String
   point: Int
   repeat: Repeat
+  timelineId: ID
   user: User
-  doneAt: Float
+  doneAt: String
   memo: String
 }
 
 type Repeat {
   type: String
-  activatedAt: Float
+  activatedAt: String
 }
 
 type Timeline {
-  id: String
+  id: ID
   kazi: Kazi
   user: User
-  doneAt: Float
+  doneAt: String
   memo: String
 }
 
 type User {
-  uid: String
+  uid: ID
   name: String
   family: Family
 }

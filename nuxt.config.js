@@ -1,6 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 require('dotenv').config()
 import server from './api/apollo-server'
+import { Datetime } from 'vue-datetime'
 
 export default {
   server: {
@@ -29,7 +30,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['@/plugins/firebase'],
+  plugins: ['@/plugins/firebase', '@/plugins/vue-datetime'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
