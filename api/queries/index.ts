@@ -29,9 +29,15 @@ const kazisToday = async (_parent: any, _args: any, _context: any) => {
   // const { familyId, datetime } = _args
   const familyId = familyRef.id
 
+  const today = new Date(Date.now())
+  today.setHours(0)
+  today.setMinutes(0)
+  today.setSeconds(0)
   const timelineRef = await db
     .collection('timeline')
     .where('familyId', '==', familyId)
+    .orderBy('doneAt', 'asc')
+    .startAt(today)
     .get()
 
   const kaziRef = await db
@@ -77,7 +83,7 @@ const kazisToday = async (_parent: any, _args: any, _context: any) => {
       point: doc.data().point,
       repeat: {
         type: doc.data().repeat.type,
-        activatedAt: doc.data().repeat.activatedAt.toDate().toString(),
+        activatedAt: doc.data().repeat.activatedAt.toDate().toISOString(),
       },
     })) as DispKazi[]
   )
@@ -87,7 +93,7 @@ const kazisToday = async (_parent: any, _args: any, _context: any) => {
     if (!timeline) continue
     kazi.timelineId = timeline.id
     kazi.user = timeline.user
-    kazi.doneAt = timeline.doneAt?.toDate().toString()
+    kazi.doneAt = timeline.doneAt?.toDate().toISOString()
     kazi.memo = timeline.memo
   }
 

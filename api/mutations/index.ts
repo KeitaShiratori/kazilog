@@ -37,7 +37,7 @@ export default {
         uid: userDoc.id,
         name: user.name,
       },
-      doneAt: timeline?.doneAt.toDate().toString(),
+      doneAt: timeline?.doneAt.toDate().toISOString(),
     }
   },
   updateTimeline: async (_parent: any, _args: any, _context: any) => {

@@ -59,6 +59,7 @@ export default Vue.extend({
       kazisToday: [],
       dialogOpen: false,
       inputDispKazi: {
+        name: '',
         memo: '',
         doneAt: '',
         user: {
@@ -95,7 +96,6 @@ export default Vue.extend({
       if (this.isSelected(idx)) {
         // 選択中の場合、timeline変更ポップアップを開く
         this.inputDispKazi = dispKazi
-
         this.dialogOpen = true
         this.selected.push(idx) // v-list-item-groupのデフォルト動作でselected状態が反転してしまうので、仕方なく自分で再度有効化している
       } else {
@@ -124,13 +124,16 @@ export default Vue.extend({
           updatedKazi.timelineId = doneKazi.id
           updatedKazi.user = doneKazi.user
           updatedKazi.doneAt = doneKazi.doneAt
-          updatedKazi.memo = doneKazi.memo?? ""
+          updatedKazi.memo = doneKazi.memo ?? ''
           store.writeQuery({ query: QKazisTodayGql, data: QKazisToday })
         },
       })
     },
     async updateTimeline() {
       console.log(this.inputDispKazi)
+
+      console.log(this.inputDispKazi.doneAt)
+      console.log(this.kazisToday)
       await this.$apollo.mutate({
         mutation: MUpdateTimelineGql,
         variables: {
