@@ -1,5 +1,5 @@
 <template lang="pug">
-v-dialog(v-model="dialog" persistent='' max-width='600px')
+v-dialog(v-model="dialog" persistent='' max-width='400px')
   v-card
     v-card-title
       span.text-h5(v-text="input.name")
@@ -7,9 +7,9 @@ v-dialog(v-model="dialog" persistent='' max-width='600px')
     v-card-text
       v-container
         v-row
-          v-col(cols='12' sm='12' md='6')
+          v-col(cols='12')
             v-text-field(label='メモ' required='' v-model="input.memo")
-          v-col(cols='12' sm='12' md='6')
+          v-col(cols='12')
             datetime(
               type="datetime"
               :flow="['time']"
@@ -21,7 +21,7 @@ v-dialog(v-model="dialog" persistent='' max-width='600px')
                 small(v-if="input.doneAt") 時間
               template(v-slot:after)
                 v-label.pb-4(v-if="!input.doneAt" absolute) 時間
-          v-col(cols='12' sm='12' md='6')
+          v-col(cols='12')
             v-text-field(label='やった人' required='' v-model="input.user.name")
     v-card-actions
       v-spacer

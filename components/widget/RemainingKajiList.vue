@@ -3,10 +3,7 @@ v-card
   v-toolbar(color="blue darken-4", dark)
     v-toolbar-title 今日の家事一覧
     v-spacer
-    v-btn(icon)
-      v-icon mdi-magnify
-    v-btn(icon)
-      v-icon mdi-checkbox-marked-circle
+    WidgetAddKaziButton
   v-list(two-line)
     v-list-item-group(v-model="selected", @click="" active-class="blue--text", multiple, prevent)
       template(v-for="(item, idx) in kazisToday")
