@@ -9,6 +9,9 @@ type Query {
 }
 
 type Mutation {
+  addCategory(
+    name: String
+  ): Category
   addKazi(
     name: String
     categoryId: String
