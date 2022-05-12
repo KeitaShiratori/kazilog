@@ -1,8 +1,76 @@
-type Book {
-  title: String
-  author: String
-}
+scalar Void 
 
 type Query {
-  books: [Book!]!
+  family: Family
+  timelinesDoneToday: [Timeline]
+  kazisRemainedToday: [Kazi]
+  kazisToday: [DispKazi]
+  categories: [Category]
+}
+
+type Mutation {
+  doneKazi(kaziId: ID): Timeline
+  updateTimeline(
+    id: ID
+    memo: String
+    uid: ID
+    userName: String
+    doneAt: String
+  ): Void
+}
+
+type Category {
+  id: ID
+  name: String
+}
+
+type Family {
+  id: ID
+  name: String
+  users: [User]
+}
+
+type Kazi {
+  id: ID
+  familyId: ID
+  family: Family
+  categoryId: ID
+  category: Category
+  name: String
+  point: Int
+  repeat: Repeat
+}
+
+type DispKazi {
+  id: ID
+  familyId: ID
+  family: Family
+  categoryId: ID
+  category: Category
+  name: String
+  point: Int
+  repeat: Repeat
+  timelineId: ID
+  user: User
+  doneAt: String
+  memo: String
+}
+
+type Repeat {
+  type: String
+  activatedAt: String
+}
+
+type Timeline {
+  id: ID
+  kazi: Kazi
+  user: User
+  doneAt: String
+  memo: String
+}
+
+type User {
+  uid: ID
+  name: String
+  family: Family
 }

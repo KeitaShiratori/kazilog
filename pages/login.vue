@@ -76,6 +76,7 @@ export default Vue.extend({
         }
         try {
           const token = await this.firebaseAuthLogin(loginInfo)
+          console.log('@login#submit token: ' + token)
           Auth.setAccessToken(this.$cookies, token) // AuthプラグインでtokenをCookieに保存
           this.$router.push('/')
         } catch (e) {

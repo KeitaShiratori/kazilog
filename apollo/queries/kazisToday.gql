@@ -1,0 +1,22 @@
+query kazisToday {
+  kazisToday {
+    id
+    category {
+      id
+      name
+    }
+    name
+    point
+    repeat {
+      type
+      activatedAt
+    }
+    timelineId
+    user {
+      uid
+      name
+    }
+    doneAt
+    memo
+  }
+}

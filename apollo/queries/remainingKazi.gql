@@ -1,0 +1,39 @@
+query timelinesDoneToday {
+  timelinesDoneToday {
+    # timeline.doneAt が 過去日の家事が本日の実施した家事
+    id
+    kazi {
+      id
+      category{
+        id
+        name
+      }
+      name
+      point
+      repeat {
+        type
+        activatedAt
+      }
+    }
+    user{
+      uid
+      name
+    }
+    doneAt
+    memo
+  }
+  kazisRemainedToday {
+    # kazi.repeat.activatedAt が 過去日の家事が本日の残りの家事
+    id
+    category{
+      id
+      name
+    }
+    name
+    point
+    repeat {
+      type
+      activatedAt
+    }
+  }
+}

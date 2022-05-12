@@ -1,0 +1,9 @@
+query family {
+  family {
+    id
+    name
+    users {
+      name
+    }
+  }
+}

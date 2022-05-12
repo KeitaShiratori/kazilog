@@ -91,7 +91,7 @@ sw.*
 # VSCode
 .vscode
 
-#codegen
+# codegen
 types/generated
 
 # secrets

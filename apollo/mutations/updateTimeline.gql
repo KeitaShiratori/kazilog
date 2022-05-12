@@ -1,0 +1,15 @@
+mutation UpdateTimeline(
+  $id: ID
+  $memo: String
+  $uid: ID
+  $userName: String
+  $doneAt: String
+) {
+  updateTimeline(
+    id: $id
+    memo: $memo
+    uid: $uid
+    userName: $userName
+    doneAt: $doneAt
+  )
+}
