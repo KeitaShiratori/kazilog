@@ -7,7 +7,7 @@ v-card
     v-container
       v-row
         v-col(cols='12')
-          ItemsCategoryInput
+          ItemsCategoryInput(:value="category", :list="categories" @selectItem="selectItem")
         v-col(cols='12')
           v-text-field(label='家事名' required='' v-model="name")
         v-col(cols='12')
@@ -50,8 +50,8 @@ export default Vue.extend({
       default: () => 1,
     },
     inputCategory: {
-      type: String,
-      default: () => '',
+      type: Object,
+      default: () => null,
     },
     inputRepeatCode: {
       type: String,
@@ -72,7 +72,7 @@ export default Vue.extend({
       repeatCode: this.inputRepeatCode,
       activatedAt: this.inputActivatedAt,
       inputStyle: {
-        color: '#FFFFFF',
+        color: 'black',
         'background-color': 'transparent',
         'border-bottom-style': 'solid',
         flex: '1 1 auto',
@@ -90,6 +90,11 @@ export default Vue.extend({
       console.log(key, val)
       this.$emit('update', { key, val })
     },
+    selectItem(kv: { key: string; val: any }) {
+      console.log('selectItem catch', kv.key, kv.val)
+      const { key, val } = Object.assign({}, kv) // kvはオブジェクトなので、参照渡しを避けるためObject.assignする
+      this.$data[key] = val
+    },
   },
   watch: {
     name() {
@@ -98,10 +103,10 @@ export default Vue.extend({
     point() {
       this.update('point', this.point)
     },
-    category(){
+    category() {
       this.update('category', this.category)
     },
-    repeatCode(){
+    repeatCode() {
       this.update('repeatCode', this.repeatCode)
     },
     activatedAt() {

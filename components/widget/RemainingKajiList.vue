@@ -1,6 +1,6 @@
 <template lang="pug">  
 v-card
-  v-toolbar(color="blue darken-4", dark)
+  v-toolbar(color="blue darken-4" dark)
     v-toolbar-title 今日の家事一覧
     v-spacer
     WidgetAddKaziButton

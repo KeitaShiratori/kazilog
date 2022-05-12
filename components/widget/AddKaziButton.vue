@@ -9,9 +9,9 @@ v-dialog(v-model="dialog", persistent, max-width="400px")
     template(v-slot:actions)
       v-card-actions
         v-spacer
-        v-btn(color='blue darken-1' text='' @click='closeDialog')
+        v-btn(color='primary' text='' @click='closeDialog')
           | Close
-        v-btn(color='blue darken-1' text='' @click='save')
+        v-btn(color='primary' text='' @click='save')
           | Save
 </template>
 
@@ -44,9 +44,14 @@ export default Vue.extend({
     },
     save() {
       console.log(
-        `name: ${this.name}, point: ${this.point}, category: ${this.category}, repeatCode: ${this.repeatCode}, activatedAt: ${this.activatedAt}`
+        "name:", this.name,
+        "point:", this.point,
+        "category:", this.category,
+        "repeatCode:", this.repeatCode,
+        "activatedAt:", this.activatedAt,
       )
       console.log('save')
+      this.dialog = false
     },
   },
 })
