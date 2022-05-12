@@ -25,12 +25,12 @@ div
         label
         small
       )
-        span.pr-2 {{ item.text }}
+        span.pr-2 {{ item.name }}
         v-icon(small, @click="model=null") $delete
     template(v-slot:item="{ index, item }")
       v-text-field(
         v-if="editing === item",
-        v-model="editing.text", 
+        v-model="editing.name", 
         autofocus, 
         flat, 
         background-color="transparent", 
@@ -38,7 +38,7 @@ div
         solo, 
         @keyup.enter="edit(index, item)"
       )
-      v-chip(v-else, :color="`${item.color} lighten-3`", dark, label, small) {{ item.text }}
+      v-chip(v-else, :color="`${item.color} lighten-3`", dark, label, small) {{ item.name }}
       v-spacer
       v-list-item-action(@click.stop)
         v-btn(icon, @click.stop.prevent="edit(index, item)")
@@ -58,38 +58,37 @@ export default Vue.extend({
       default: () => [],
     },
   },
-  data: () => ({
-    activator: null,
-    attach: null,
-    colors: ['green', 'purple', 'indigo', 'cyan', 'teal', 'orange'],
-    editing: null,
-    editingIndex: -1,
-    items: [
+  data() {
+    const colors = ['green', 'purple', 'indigo', 'cyan', 'teal', 'orange']
+    const items = [
       { header: 'カテゴリを選択または作成' },
-      {
-        text: 'Foo',
-        color: 'blue',
-      },
-      {
-        text: 'Bar',
-        color: 'red',
-      },
-    ],
-    nonce: 1,
-    menu: false,
-    model: null,
-    x: 0,
-    search: null,
-    y: 0,
-  }),
-
+      ...this.list.map((o: any, i) => {
+        if (!o.color) o.color = colors[i % colors.length]
+        return o
+      }),
+    ]
+    return {
+      activator: null,
+      attach: null,
+      colors,
+      editing: null,
+      editingIndex: -1,
+      items,
+      nonce: items.length % colors.length,
+      menu: false,
+      model: null,
+      x: 0,
+      search: null,
+      y: 0,
+    }
+  },
   watch: {
     model(val) {
       if (typeof val === 'string') {
-        // stringで来るということは、新規？
+        // 新規入力した場合
         console.log('val: ', val)
         val = {
-          text: val,
+          name: val,
           color: this.colors[this.nonce - 1],
         }
 
@@ -99,9 +98,7 @@ export default Vue.extend({
         this.nonce++
       }
       if (this.editing) {
-        console.log('edit finish', JSON.stringify(val))
-        this.editing = null
-        this.editingIndex = -1
+        this.update(val)
       }
       this.$emit('selectItem', { key: 'category', val })
     },
@@ -110,26 +107,30 @@ export default Vue.extend({
   methods: {
     edit(index: any, item: any) {
       if (!this.editing) {
+        // 編集開始
         console.log('edit start', JSON.stringify(item))
         this.editing = item
         this.editingIndex = index
       } else {
-        //ここがたぶん編集確定
-        console.log('edit finish', JSON.stringify(item))
-        this.editing = null
-        this.editingIndex = -1
+        // 編集確定
+        this.update(item)
       }
+    },
+    update(item: any) {
+      console.log('edit finish', JSON.stringify(item))
+      this.editing = null
+      this.editingIndex = -1
     },
     filter(item: any, queryText: any, itemText: any) {
       if (item.header) return false
 
       const hasValue = (val: any) => (val != null ? val : '')
 
-      const text = hasValue(itemText)
+      const name = hasValue(itemText)
       const query = hasValue(queryText)
 
       return (
-        text.toString().toLowerCase().indexOf(query.toString().toLowerCase()) >
+        name.toString().toLowerCase().indexOf(query.toString().toLowerCase()) >
         -1
       )
     },

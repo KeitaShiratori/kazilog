@@ -5,7 +5,7 @@ import { join } from 'path'
 import { Resolvers } from '@/types/generated/graphql'
 import { ApolloContext } from '@/types/apollo'
 import { getUser } from './utils'
-import { family, kazisToday } from './queries/index'
+import Query from './queries/index'
 import Mutation from './mutations/index'
 
 // スキーマの定義
@@ -15,10 +15,7 @@ const schema = loadSchemaSync(join(__dirname, '../schema.graphql'), {
 
 // リゾルバーの定義 (型のサポートを受けれる)
 const resolvers: Resolvers = {
-  Query: {
-    family,
-    kazisToday,
-  },
+  Query: Query,
   Mutation: Mutation,
 }
 

@@ -38,6 +38,8 @@ v-card
 <script lang="ts">
 import Vue from 'vue'
 import { REPEAT_CODE } from '@/utils/constants'
+import QCategoriesGql from '@/apollo/queries/categories.gql'
+import { Category } from '@/types/generated/graphql'
 
 export default Vue.extend({
   props: {
@@ -64,7 +66,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      categories: ['洗濯', '料理', '掃除'],
+      categories: [],
       repeatCodes: Object.keys(REPEAT_CODE),
       name: this.inputName,
       point: this.inputPoint,
@@ -84,6 +86,12 @@ export default Vue.extend({
         position: 'relative',
       },
     }
+  },
+  apollo: {
+    categories: {
+      prefetch: true,
+      query: QCategoriesGql,
+    },
   },
   methods: {
     update(key: string, val: any) {

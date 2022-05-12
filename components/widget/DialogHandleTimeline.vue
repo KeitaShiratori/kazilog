@@ -40,7 +40,7 @@ export default Vue.extend({
     return {
       isDatetimeOpen: false,
       inputStyle: {
-        color: '#FFFFFF',
+        color: 'black',
         'background-color': 'transparent',
         'border-bottom-style': 'solid',
         flex: '1 1 auto',

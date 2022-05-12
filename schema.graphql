@@ -5,6 +5,7 @@ type Query {
   timelinesDoneToday: [Timeline]
   kazisRemainedToday: [Kazi]
   kazisToday: [DispKazi]
+  categories: [Category]
 }
 
 type Mutation {
