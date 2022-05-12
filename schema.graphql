@@ -1,4 +1,4 @@
-scalar Void 
+scalar Void
 
 type Query {
   family: Family
@@ -9,6 +9,13 @@ type Query {
 }
 
 type Mutation {
+  addKazi(
+    name: String
+    categoryId: String
+    point: Int
+    repeatType: String
+    activatedAt: String
+  ): DispKazi
   doneKazi(kaziId: ID): Timeline
   updateTimeline(
     id: ID
@@ -20,36 +27,36 @@ type Mutation {
 }
 
 type Category {
-  id: ID
-  name: String
+  id: ID!
+  name: String!
 }
 
 type Family {
-  id: ID
-  name: String
-  users: [User]
+  id: ID!
+  name: String!
+  users: [User]!
 }
 
 type Kazi {
-  id: ID
-  familyId: ID
-  family: Family
-  categoryId: ID
-  category: Category
-  name: String
-  point: Int
-  repeat: Repeat
+  id: ID!
+  familyId: ID!
+  family: Family!
+  categoryId: ID!
+  category: Category!
+  name: String!
+  point: Int!
+  repeat: Repeat!
 }
 
 type DispKazi {
-  id: ID
-  familyId: ID
-  family: Family
-  categoryId: ID
-  category: Category
-  name: String
-  point: Int
-  repeat: Repeat
+  id: ID!
+  familyId: ID!
+  family: Family!
+  categoryId: ID!
+  category: Category!
+  name: String!
+  point: Int!
+  repeat: Repeat!
   timelineId: ID
   user: User
   doneAt: String
@@ -57,20 +64,20 @@ type DispKazi {
 }
 
 type Repeat {
-  type: String
-  activatedAt: String
+  type: String!
+  activatedAt: String!
 }
 
 type Timeline {
-  id: ID
-  kazi: Kazi
-  user: User
-  doneAt: String
+  id: ID!
+  kazi: Kazi!
+  user: User!
+  doneAt: String!
   memo: String
 }
 
 type User {
-  uid: ID
-  name: String
-  family: Family
+  uid: ID!
+  name: String!
+  family: Family!
 }

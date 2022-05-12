@@ -15,10 +15,14 @@ export const categories = async (_parent: any, _args: any, _context: any) => {
     .where('familyId', '==', familyId)
     .get()
 
+  const dat = categoryRef.docs[0].data()
   return await Promise.all(
-    categoryRef.docs.map(async (doc) => ({
-      id: doc.id,
-      name: doc.data().name,
-    })) as Category[]
+    categoryRef.docs.map(
+      async (doc: DocumentData) =>
+        ({
+          id: doc.id,
+          name: doc.data().name,
+        } as Category)
+    )
   )
 }

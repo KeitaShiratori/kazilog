@@ -1,0 +1,27 @@
+mutation AddKazi(
+  $name: String
+  $categoryId: String
+  $point: Int
+  $repeatType: String
+  $activatedAt: String
+) {
+  addKazi(
+    name: $name
+    categoryId: $categoryId
+    point: $point
+    repeatType: $repeatType
+    activatedAt: $activatedAt
+  ) {
+    id
+    category {
+      id
+      name
+    }
+    name
+    point
+    repeat {
+      type
+      activatedAt
+    }
+  }
+}

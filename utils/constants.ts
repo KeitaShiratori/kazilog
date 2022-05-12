@@ -1,4 +1,4 @@
-export const REPEAT_CODE: RepeatCode = {
+export const REPEAT_TYPE: repeatType = {
   ONCE: {
     key: 'once',
     val: '繰り返しなし',

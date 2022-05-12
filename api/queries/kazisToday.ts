@@ -56,26 +56,29 @@ export const kazisToday = async (_parent: any, _args: any, _context: any) => {
   )
 
   const kazis = await Promise.all(
-    kaziRef.docs.map(async (doc) => ({
-      id: doc.id,
-      category: {
-        id: doc.data().categoryId,
-        name: (await doc.data().category.get()).data().name,
-      },
-      name: doc.data().name,
-      point: doc.data().point,
-      repeat: {
-        type: doc.data().repeat.type,
-        activatedAt: doc.data().repeat.activatedAt.toDate().toISOString(),
-      },
-    })) as DispKazi[]
+    kaziRef.docs.map(
+      async (doc) =>
+        ({
+          id: doc.id,
+          category: {
+            id: doc.data().categoryId,
+            name: (await doc.data().category.get()).data().name,
+          },
+          name: doc.data().name,
+          point: doc.data().point,
+          repeat: {
+            type: doc.data().repeat.type,
+            activatedAt: doc.data().repeat.activatedAt.toDate().toISOString(),
+          },
+        } as DispKazi)
+    )
   )
 
   for (const kazi of kazis) {
-    const timeline = timelines.find((t: Timeline) => t.kazi?.id === kazi.id)
+    const timeline = timelines.find((t: any) => t.kazi.id === kazi.id)
     if (!timeline) continue
     kazi.timelineId = timeline.id
-    kazi.user = timeline.user
+    kazi.user = timeline.user as User,
     kazi.doneAt = timeline.doneAt?.toDate().toISOString()
     kazi.memo = timeline.memo
   }

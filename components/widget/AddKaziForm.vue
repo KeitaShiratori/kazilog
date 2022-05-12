@@ -16,8 +16,8 @@ v-card
               v-text-field(label='ポイント' required='' type="number" v-model="point")
         v-col(cols="12")
           v-select(
-            v-model="repeatCode"
-            :items="repeatCodes"
+            v-model="repeatType"
+            :items="repeatTypes"
             label="繰り返し"
           )
         v-col(cols='12')
@@ -37,7 +37,7 @@ v-card
 
 <script lang="ts">
 import Vue from 'vue'
-import { REPEAT_CODE } from '@/utils/constants'
+import { REPEAT_TYPE } from '@/utils/constants'
 import QCategoriesGql from '@/apollo/queries/categories.gql'
 import { Category } from '@/types/generated/graphql'
 
@@ -55,7 +55,7 @@ export default Vue.extend({
       type: Object,
       default: () => null,
     },
-    inputRepeatCode: {
+    inputRepeatType: {
       type: String,
       default: () => '',
     },
@@ -67,11 +67,11 @@ export default Vue.extend({
   data() {
     return {
       categories: [],
-      repeatCodes: Object.keys(REPEAT_CODE),
+      repeatTypes: Object.keys(REPEAT_TYPE),
       name: this.inputName,
       point: this.inputPoint,
       category: this.inputCategory,
-      repeatCode: this.inputRepeatCode,
+      repeatType: this.inputRepeatType,
       activatedAt: this.inputActivatedAt,
       inputStyle: {
         color: 'black',
@@ -91,6 +91,12 @@ export default Vue.extend({
     categories: {
       prefetch: true,
       query: QCategoriesGql,
+      // update(data: { categories: Category[] }) {
+      //   console.log('categories got')
+      //   const categories = data.categories
+      //   console.log(categories)
+
+      // },
     },
   },
   methods: {
@@ -105,6 +111,11 @@ export default Vue.extend({
     },
   },
   watch: {
+    categories(val, prev) {
+      console.log('val', val)
+      console.log('prev', prev)
+      console.log('this.categories', this.categories)
+    },
     name() {
       this.update('name', this.name)
     },
@@ -114,8 +125,8 @@ export default Vue.extend({
     category() {
       this.update('category', this.category)
     },
-    repeatCode() {
-      this.update('repeatCode', this.repeatCode)
+    repeatType() {
+      this.update('repeatType', this.repeatType)
     },
     activatedAt() {
       this.update('activatedAt', this.activatedAt)
