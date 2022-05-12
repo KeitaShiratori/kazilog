@@ -47,6 +47,7 @@ div
 
 <script lang="ts">
 import Vue from 'vue'
+import { Category } from '~/types/generated/graphql'
 export default Vue.extend({
   props: {
     value: {
@@ -83,6 +84,15 @@ export default Vue.extend({
     }
   },
   watch: {
+    list(val, prev) {
+      console.log('list watch start', val, prev)
+      val.map((v: any, i) => {
+        if (!prev.includes(v)) {
+          if (!v.color) v.color = this.colors[i % this.colors.length]
+          this.items.push(v)
+        }
+      })
+    },
     model(val) {
       if (typeof val === 'string') {
         // 新規入力した場合
@@ -103,7 +113,6 @@ export default Vue.extend({
       this.$emit('selectItem', { key: 'category', val })
     },
   },
-
   methods: {
     edit(index: any, item: any) {
       if (!this.editing) {

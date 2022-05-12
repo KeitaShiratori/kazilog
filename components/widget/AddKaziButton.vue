@@ -17,6 +17,9 @@ v-dialog(v-model="dialog", persistent, max-width="400px")
 
 <script lang="ts">
 import Vue from 'vue'
+import MAddKaziGql from '@/apollo/mutations/addKazi.gql'
+import QKazisTodayGql from '@/apollo/queries/kazisToday.gql'
+import { DispKazi, Kazi } from '~/types/generated/graphql'
 
 export default Vue.extend({
   data() {
@@ -24,8 +27,8 @@ export default Vue.extend({
       dialog: false,
       name: '',
       point: 1,
-      category: '',
-      repeatCode: '',
+      category: { id: '', name: '' },
+      repeatType: '',
       activatedAt: '',
     }
   },
@@ -42,16 +45,46 @@ export default Vue.extend({
       this.dialog = false
       console.log('closeDialog')
     },
-    save() {
+    async save() {
       console.log(
-        "name:", this.name,
-        "point:", this.point,
-        "category:", this.category,
-        "repeatCode:", this.repeatCode,
-        "activatedAt:", this.activatedAt,
+        'name:',
+        this.name,
+        'point:',
+        this.point,
+        'category:',
+        this.category,
+        'repeatType:',
+        this.repeatType,
+        'activatedAt:',
+        this.activatedAt
       )
       console.log('save')
+      await this.addKazi()
       this.dialog = false
+    },
+    async addKazi() {
+      await this.$apollo.mutate({
+        mutation: MAddKaziGql,
+        variables: {
+          name: this.name,
+          categoryId: this.category.id,
+          point: this.point,
+          repeatType: this.repeatType,
+          activatedAt: this.activatedAt,
+        },
+        update: (store: any, _data: { data: { addKazi: DispKazi } }) => {
+          console.log('addKazi updateddddddddddddddd')
+          const QKazisToday = store.readQuery({
+            query: QKazisTodayGql,
+          })
+          const { kazisToday } = QKazisToday
+          console.log(kazisToday)
+          console.log(typeof kazisToday)
+          const addKazi = _data.data.addKazi
+          kazisToday.push(addKazi)
+          store.writeQuery({ query: QKazisTodayGql, data: QKazisToday })
+        },
+      })
     },
   },
 })

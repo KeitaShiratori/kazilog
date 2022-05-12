@@ -3,7 +3,7 @@ type KeyVal = {
   val: string | number
 }
 
-type RepeatCode = {
+type repeatType = {
   ONCE: KeyVal
   DAILY: KeyVal
   WEEKLY: KeyVal
