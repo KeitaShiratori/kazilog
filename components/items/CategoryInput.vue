@@ -47,7 +47,18 @@ div
 
 <script lang="ts">
 import Vue from 'vue'
+import MAddCategoryGql from '@/apollo/mutations/addCategory.gql'
+import QCategoriesGql from '@/apollo/queries/Categories.gql'
 import { Category } from '~/types/generated/graphql'
+interface DispCategory {
+  id: String
+  name: String
+  color: String
+}
+interface DispHeader {
+  header: String
+}
+
 export default Vue.extend({
   props: {
     value: {
@@ -61,13 +72,9 @@ export default Vue.extend({
   },
   data() {
     const colors = ['green', 'purple', 'indigo', 'cyan', 'teal', 'orange']
-    const items = [
-      { header: 'カテゴリを選択または作成' },
-      ...this.list.map((o: any, i) => {
-        if (!o.color) o.color = colors[i % colors.length]
-        return o
-      }),
-    ]
+    const items = [{ header: 'カテゴリを選択または作成' }] as Array<
+      DispHeader | DispCategory
+    >
     return {
       activator: null,
       attach: null,
@@ -77,7 +84,7 @@ export default Vue.extend({
       items,
       nonce: items.length % colors.length,
       menu: false,
-      model: null,
+      model: null as DispCategory | null,
       x: 0,
       search: null,
       y: 0,
@@ -86,10 +93,9 @@ export default Vue.extend({
   watch: {
     list(val, prev) {
       console.log('list watch start', val, prev)
-      val.map((v: any, i) => {
+      val.map((v: Category) => {
         if (!prev.includes(v)) {
-          if (!v.color) v.color = this.colors[i % this.colors.length]
-          this.items.push(v)
+          this.addItems(v)
         }
       })
     },
@@ -97,12 +103,8 @@ export default Vue.extend({
       if (typeof val === 'string') {
         // 新規入力した場合
         console.log('val: ', val)
-        val = {
-          name: val,
-          color: this.colors[this.nonce - 1],
-        }
-
-        this.items.push(val)
+        val = this.makeDispCategory(val)
+        this.createCategory(val.name)
         this.model = val
 
         this.nonce++
@@ -114,6 +116,42 @@ export default Vue.extend({
     },
   },
   methods: {
+    makeDispCategory(val: String | Category): DispCategory {
+      return typeof val === 'string'
+        ? {
+            id: '',
+            name: val,
+            color: this.colors[this.nonce - 1],
+          }
+        : Object.assign(val as Category, {
+            color: this.colors[this.items.length % this.colors.length],
+          })
+    },
+    addItems(val: String | Category): DispCategory {
+      const dispCategory = this.makeDispCategory(val)
+      this.items.push(dispCategory)
+      return dispCategory
+    },
+    async createCategory(name: String) {
+      await this.$apollo.mutate({
+        mutation: MAddCategoryGql,
+        variables: {
+          name: name,
+        },
+        update: (store: any, _data: { data: { addCategory: Category } }) => {
+          console.log('addKazi updateddddddddddddddd')
+          const QCategories = store.readQuery({
+            query: QCategoriesGql,
+          })
+          const { categories } = QCategories
+          console.log(categories)
+          console.log(typeof categories)
+          const { addCategory } = _data.data
+          categories.push(addCategory)
+          store.writeQuery({ query: QCategoriesGql, data: QCategories })
+        },
+      })
+    },
     edit(index: any, item: any) {
       if (!this.editing) {
         // 編集開始

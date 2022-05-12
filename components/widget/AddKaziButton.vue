@@ -19,7 +19,7 @@ v-dialog(v-model="dialog", persistent, max-width="400px")
 import Vue from 'vue'
 import MAddKaziGql from '@/apollo/mutations/addKazi.gql'
 import QKazisTodayGql from '@/apollo/queries/kazisToday.gql'
-import { DispKazi, Kazi } from '~/types/generated/graphql'
+import { DispKazi } from '~/types/generated/graphql'
 
 export default Vue.extend({
   data() {
