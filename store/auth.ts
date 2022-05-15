@@ -1,4 +1,9 @@
-import { getFirebaseAuth } from '@/plugins/firebase'
+import {
+  getFirebaseAuth,
+  providers,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from '@/plugins/firebase'
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -67,6 +72,27 @@ export default class AuthStore extends VuexModule {
     } catch (error) {
       console.log(error)
       // ログイン失敗
+    }
+  }
+
+  @Action({ rawError: true })
+  public async signInWithGoogle() {
+    const auth = getFirebaseAuth()
+    try {
+      const result = await signInWithPopup(auth, providers.google)
+      const credential = GoogleAuthProvider.credentialFromResult(result)
+      const user = result.user
+      this.logIn(user)
+      const token = await getIdToken(user)
+      return token
+    } catch (error: any) {
+      // Handle Errors here.
+      const errorCode = error.code
+      const errorMessage = error.message
+      // The email of the user's account used.
+      const email = error.email
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error)
     }
   }
 

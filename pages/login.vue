@@ -1,25 +1,22 @@
-<template>
-  <div>
-    <Alert ref="alert" alertType="error" :message="alertMessage"></Alert>
-    <v-form ref="form" v-model="valid" lazy-validation>
-      <!-- $touch: $dirtyフラグを trueにする -->
-      <v-text-field
-        v-model="username"
-        :rules="usernameRules"
-        label="Username"
-        required
-      ></v-text-field>
-      <v-text-field
-        v-model="password"
-        :rules="usernameRules"
-        label="Password"
-        required
-        type="password"
-      ></v-text-field>
-      <v-btn class="mr-4" @click="submit">submit</v-btn>
-      <v-btn @click="clear">clear</v-btn>
-    </v-form>
-  </div>
+<template lang="pug">
+div
+  Alert(ref="alert", alertType="error", :message="alertMessage")
+  v-form(ref="form", v-model="valid", lazy-validation)
+    v-text-field(v-model="username", :rules="usernameRules", label="Username", required)
+    v-text-field(v-model="password", :rules="usernameRules", label="Password", required, type="password")
+    v-btn.mr-4(@click="submit") submit
+    v-btn(@click="clear") clear
+
+  v-card.mt-10
+    v-card-title Googleでログインする
+    v-card-text
+      v-list
+        v-list-item-group
+          v-list-item
+            v-btn(@click="google")
+              v-icon mdi-google
+              | &nbsp Googleログイン
+    
 </template>
 
 <script lang="ts">
@@ -64,7 +61,7 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapActions('auth', ['firebaseAuthLogin']),
+    ...mapActions('auth', ['firebaseAuthLogin', 'signInWithGoogle']),
     async submit() {
       // すべてのフォームのバリデーションチェックを行う
       // validate()を呼び出すには$refs.formはHTMLFormElementにキャストしないといけない
@@ -79,7 +76,7 @@ export default Vue.extend({
           console.log('@login#submit token: ' + token)
           Auth.setAccessToken(this.$cookies, token) // AuthプラグインでtokenをCookieに保存
           this.$router.push('/')
-        } catch (e) {
+        } catch (e: any) {
           // 失敗時はAlertを表示
           this.$data.alertMessage = e.response?.data?.detail ?? 'Error...'
           ;(this.$refs.alert as any).open()
@@ -108,6 +105,18 @@ export default Vue.extend({
     clear(): void {
       // 入力とバリデーションのリセット
       ;(this.$refs.form as HTMLFormElement).reset()
+    },
+    async google() {
+      try {
+        const token = await this.signInWithGoogle()
+        console.log('@login#google token: ' + token)
+        Auth.setAccessToken(this.$cookies, token) // AuthプラグインでtokenをCookieに保存
+        this.$router.push('/')
+      } catch (e: any) {
+        // 失敗時はAlertを表示
+        this.$data.alertMessage = e.response?.data?.detail ?? 'Error...'
+        ;(this.$refs.alert as any).open()
+      }
     },
   },
   computed: {
