@@ -30,6 +30,7 @@ export default class AuthStore extends VuexModule {
       isLoggedIn: false,
       uid: null,
       user: null,
+      familyId: null,
     })
   }
 
@@ -41,6 +42,10 @@ export default class AuthStore extends VuexModule {
     return this.authState.user
   }
 
+  public get hasFamilyId() {
+    return !!this.authState.familyId
+  }
+
   @Mutation
   private async logOut(auth: Auth) {
     this.authState = AuthStore.getDefaultState()
@@ -50,6 +55,10 @@ export default class AuthStore extends VuexModule {
     this.authState.user = deepCopy(user)
     this.authState.uid = this.authState.user?.uid ?? null
     this.authState.isLoggedIn = true
+  }
+  @Mutation
+  private async _setFamilyId(familyId: string) {
+    this.authState.familyId = familyId
   }
 
   // const provider = new GoogleAuthProvider();
@@ -126,5 +135,10 @@ export default class AuthStore extends VuexModule {
     uid: string
   }) {
     this.logIn(user)
+  }
+
+  @Action({ rawError: true })
+  public setFamilyId(familyId: string) {
+    this._setFamilyId(familyId)
   }
 }

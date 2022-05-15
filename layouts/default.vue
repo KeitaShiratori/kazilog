@@ -8,9 +8,14 @@ v-app
 </template>
 
 <script>
+import Vue from 'vue'
+import { mapGetters, mapActions } from 'vuex'
 import { AuthStore } from '@/store'
+import 'vue-apollo'
+import familyIdGql from '@/apollo/queries/familyId.gql'
+import { FamilyId } from '~/types/generated/graphql'
 
-export default {
+export default Vue.extend({
   name: 'DefaultLayout',
   data() {
     return {
@@ -33,12 +38,29 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'Vuetify.js',
+      familyId: null,
     }
   },
-  computed: {
-    isAuthenticated() {
-      return AuthStore.isAuthenticated
+  apollo: {
+    familyId: {
+      prefetch: true,
+      query: familyIdGql,
+      update({ familyId }) {
+        console.log('@/layout/defaul update familyId')
+        const { id } = familyId
+        this.setFamilyId(id)
+        console.log('@/layout/defaul update familyId end: familyId is ', id)
+        if (this.isAuthenticated && !id) {
+          this.$router.push({ name: 'settings' })
+        }
+      },
     },
   },
-}
+  computed: {
+    ...mapGetters('auth', ['isAuthenticated']),
+  },
+  methods: {
+    ...mapActions('auth', ['setFamilyId']),
+  },
+})
 </script>

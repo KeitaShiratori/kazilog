@@ -19,11 +19,14 @@ v-card
 <script lang="ts">
 import 'vue-apollo'
 import familyGql from '@/apollo/queries/family.gql'
-import { Family } from '@/types/generated/graphql'
 
 interface Data {
-  family: Family
+  family: DispFamily
 }
+interface DispFamily {
+  name: String
+}
+
 export default {
   name: 'WidgetFamilyCard',
   // layout: 'protected',

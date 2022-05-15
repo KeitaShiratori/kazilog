@@ -2,6 +2,7 @@ scalar Void
 
 type Query {
   family: Family
+  familyId: FamilyId
   timelinesDoneToday: [Timeline]
   kazisRemainedToday: [Kazi]
   kazisToday: [DispKazi]
@@ -9,9 +10,7 @@ type Query {
 }
 
 type Mutation {
-  addCategory(
-    name: String
-  ): Category
+  addCategory(name: String): Category
   addKazi(
     name: String
     categoryId: String
@@ -32,6 +31,10 @@ type Mutation {
 type Category {
   id: ID!
   name: String!
+}
+
+type FamilyId {
+  id: String
 }
 
 type Family {
