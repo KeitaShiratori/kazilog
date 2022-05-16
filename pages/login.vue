@@ -24,6 +24,9 @@ import Vue from 'vue'
 import Alert from '@/components/Alert.vue'
 import Auth from '~/plugins/authCookie'
 import { mapGetters, mapActions } from 'vuex'
+import QfamilyIdGql from '@/apollo/queries/familyId.gql'
+import MLoginGql from '@/apollo/mutations/login.gql'
+import { UserAuth } from '~/types/generated/graphql'
 
 interface LoginData {
   valid: boolean
@@ -61,7 +64,6 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapActions('auth', ['firebaseAuthLogin', 'signInWithGoogle']),
     async submit() {
       // すべてのフォームのバリデーションチェックを行う
       // validate()を呼び出すには$refs.formはHTMLFormElementにキャストしないといけない
@@ -75,6 +77,7 @@ export default Vue.extend({
           const token = await this.firebaseAuthLogin(loginInfo)
           console.log('@login#submit token: ' + token)
           Auth.setAccessToken(this.$cookies, token) // AuthプラグインでtokenをCookieに保存
+          await this.createUserIfNotExist()
           this.$router.push('/')
         } catch (e: any) {
           // 失敗時はAlertを表示
@@ -111,13 +114,41 @@ export default Vue.extend({
         const token = await this.signInWithGoogle()
         console.log('@login#google token: ' + token)
         Auth.setAccessToken(this.$cookies, token) // AuthプラグインでtokenをCookieに保存
-        this.$router.push('/')
+        await this.createUserIfNotExist()
+        console.log('@/pages/login createUserIfNotExist end')
       } catch (e: any) {
         // 失敗時はAlertを表示
         this.$data.alertMessage = e.response?.data?.detail ?? 'Error...'
         ;(this.$refs.alert as any).open()
       }
     },
+    async createUserIfNotExist() {
+      console.log('@/pages/login createUserIfNotExist start')
+      await this.$apollo.mutate({
+        mutation: MLoginGql,
+        update: (store: any, _data: { data: { login: UserAuth } }) => {
+          console.log('@/pages/login update MLoginGql')
+          const { uid, name, familyId } = _data.data.login
+
+          this.setFamilyId(familyId)
+          console.log(
+            '@/pages/login createUserIfNotExist update familyId end: familyId is ',
+            familyId
+          )
+          if (!name || !familyId) {
+            this.$router.push({ name: 'settings' })
+          } else {
+            this.$router.push('/')
+          }
+        },
+      })
+      console.log('@/pages/login createUserIfNotExist end')
+    },
+    ...mapActions('auth', [
+      'firebaseAuthLogin',
+      'signInWithGoogle',
+      'setFamilyId',
+    ]),
   },
   computed: {
     ...mapGetters('auth', ['isAuthenticated', 'currentUserInfo']),

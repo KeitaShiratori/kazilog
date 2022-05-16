@@ -1,0 +1,7 @@
+mutation Login {
+  login {
+    uid
+    name
+    familyId
+  }
+}

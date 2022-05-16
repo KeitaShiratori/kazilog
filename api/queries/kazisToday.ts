@@ -4,84 +4,92 @@ import { Timeline, User, DispKazi } from '@/types/generated/graphql'
 
 export const kazisToday = async (_parent: any, _args: any, _context: any) => {
   const uid = _context?.user?.uid
-  const doc = await db.collection('users').doc(uid).get()
+  const resKazisToday = []
 
-  const user = doc.data() as User
-  const familyRef = user.family as DocumentData
+  try {
+    const doc = await db.collection('users').doc(uid).get()
 
-  // const { familyId, datetime } = _args
-  const familyId = familyRef.id
+    const user = doc.data() as User
+    const familyRef = user.family as DocumentData
 
-  const today = new Date(Date.now())
-  today.setHours(0)
-  today.setMinutes(0)
-  today.setSeconds(0)
-  const timelineRef = await db
-    .collection('timeline')
-    .where('familyId', '==', familyId)
-    .orderBy('doneAt', 'asc')
-    .startAt(today)
-    .get()
+    // const { familyId, datetime } = _args
+    const familyId = familyRef.id
 
-  const kaziRef = await db
-    .collection('kazi')
-    .where('familyId', '==', familyId)
-    .get()
+    const today = new Date(Date.now())
+    today.setHours(0)
+    today.setMinutes(0)
+    today.setSeconds(0)
+    const timelineRef = await db
+      .collection('timeline')
+      .where('familyId', '==', familyId)
+      .orderBy('doneAt', 'asc')
+      .startAt(today)
+      .get()
 
-  const timelines = await Promise.all(
-    timelineRef.docs.map(async (doc) => {
-      const kazi = (await (doc.data().kazi as DocumentData).get()).data()
-      const categoryName = (await kazi.category.get()).data().name
-      const userName = (await doc.data().user.get()).data().name
-      return {
-        id: doc.id,
-        kazi: {
-          id: doc.data().kazi.id,
-          category: {
-            id: kazi.categoryId,
-            name: categoryName,
-          },
-          name: kazi.name,
-          point: kazi.point,
-          repeat: kazi.repeat,
-        },
-        user: {
-          uid: doc.data().user.id,
-          name: userName,
-        },
-        memo: doc.data().memo,
-        doneAt: doc.data().doneAt,
-      }
-    })
-  )
+    const kaziRef = await db
+      .collection('kazi')
+      .where('familyId', '==', familyId)
+      .get()
 
-  const kazis = await Promise.all(
-    kaziRef.docs.map(
-      async (doc) =>
-        ({
+    const timelines = await Promise.all(
+      timelineRef.docs.map(async (doc) => {
+        const kazi = (await (doc.data().kazi as DocumentData).get()).data()
+        const categoryName = (await kazi.category.get()).data().name
+        const userName = (await doc.data().user.get()).data().name
+        return {
           id: doc.id,
-          category: {
-            id: doc.data().categoryId,
-            name: (await doc.data().category.get()).data().name,
+          kazi: {
+            id: doc.data().kazi.id,
+            category: {
+              id: kazi.categoryId,
+              name: categoryName,
+            },
+            name: kazi.name,
+            point: kazi.point,
+            repeat: kazi.repeat,
           },
-          name: doc.data().name,
-          point: doc.data().point,
-          repeat: {
-            type: doc.data().repeat.type,
-            activatedAt: doc.data().repeat.activatedAt.toDate().toISOString(),
+          user: {
+            uid: doc.data().user.id,
+            name: userName,
           },
-        } as DispKazi)
+          memo: doc.data().memo,
+          doneAt: doc.data().doneAt,
+        }
+      })
     )
-  )
 
-  for (const kazi of kazis) {
-    const timeline = timelines.find((t: any) => t.kazi.id === kazi.id)
-    if (!timeline) continue
-    kazi.timelineId = timeline.id
-    kazi.user = timeline.user as User,
-    kazi.doneAt = timeline.doneAt?.toDate().toISOString()
-    kazi.memo = timeline.memo
+    const kazis = await Promise.all(
+      kaziRef.docs.map(
+        async (doc) =>
+          ({
+            id: doc.id,
+            category: {
+              id: doc.data().categoryId,
+              name: (await doc.data().category.get()).data().name,
+            },
+            name: doc.data().name,
+            point: doc.data().point,
+            repeat: {
+              type: doc.data().repeat.type,
+              activatedAt: doc.data().repeat.activatedAt.toDate().toISOString(),
+            },
+          } as DispKazi)
+      )
+    )
+
+    for (const kazi of kazis) {
+      const timeline = timelines.find((t: any) => t.kazi.id === kazi.id)
+      if (!timeline) continue
+      kazi.timelineId = timeline.id
+      ;(kazi.user = timeline.user as User),
+        (kazi.doneAt = timeline.doneAt?.toDate().toISOString())
+      kazi.memo = timeline.memo
+    }
+
+    resKazisToday.push(...kazis)
+  } catch (e) {
+    console.log(e)
   }
 
-  return kazis
+  return resKazisToday
 }

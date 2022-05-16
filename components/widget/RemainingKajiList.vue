@@ -44,7 +44,17 @@ interface Data {
   kazisToday: DispKazi[]
   selected: Number[]
   dialogOpen: Boolean
-  inputDispKazi: DispKazi
+  inputDispKazi: InputDispKazi
+}
+interface InputDispKazi {
+  name: string
+  memo: string
+  doneAt: string
+  user: {
+    uid: string
+    name: string
+  }
+  timelineId?: string
 }
 
 export default Vue.extend({
@@ -92,7 +102,16 @@ export default Vue.extend({
     async handleKazi(dispKazi: DispKazi, idx: Number) {
       if (this.isSelected(idx)) {
         // 選択中の場合、timeline変更ポップアップを開く
-        this.inputDispKazi = dispKazi
+        this.inputDispKazi = {
+          name: dispKazi.name,
+          memo: dispKazi.memo ?? '',
+          doneAt: dispKazi.doneAt ?? '',
+          user: {
+            uid: dispKazi.user?.uid ?? '',
+            name: dispKazi.user?.uid ?? '',
+          },
+          timelineId: dispKazi.timelineId ?? '',
+        }
         this.dialogOpen = true
         this.selected.push(idx) // v-list-item-groupのデフォルト動作でselected状態が反転してしまうので、仕方なく自分で再度有効化している
       } else {

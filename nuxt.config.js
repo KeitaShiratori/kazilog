@@ -55,7 +55,7 @@ export default {
   ],
 
   router: {
-    middleware: ['restoreAuth', 'auth'],
+    middleware: ['restoreAuth', 'restoreFamilyId', 'auth'],
   },
 
   hooks: {

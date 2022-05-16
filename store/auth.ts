@@ -46,6 +46,10 @@ export default class AuthStore extends VuexModule {
     return !!this.authState.familyId
   }
 
+  public get getAuthState() {
+    return this.authState
+  }
+
   @Mutation
   private async logOut(auth: Auth) {
     this.authState = AuthStore.getDefaultState()
@@ -77,7 +81,8 @@ export default class AuthStore extends VuexModule {
       )
       const user = userCredential.user
       this.logIn(user)
-      return await getIdToken(user)
+      const token = await getIdToken(user)
+      return token
     } catch (error) {
       console.log(error)
       // ログイン失敗

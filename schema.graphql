@@ -10,6 +10,10 @@ type Query {
 }
 
 type Mutation {
+  login: UserAuth
+  updateUser(name: String): UserAuth
+  addFamily(name: String): Family
+  joinFamily(name: String): Family
   addCategory(name: String): Category
   addKazi(
     name: String
@@ -39,8 +43,8 @@ type FamilyId {
 
 type Family {
   id: ID!
-  name: String!
-  users: [User]!
+  name: String
+  users: [User]
 }
 
 type Kazi {
@@ -84,6 +88,12 @@ type Timeline {
 
 type User {
   uid: ID!
-  name: String!
-  family: Family!
+  name: String
+  family: Family
+}
+
+type UserAuth{
+  uid: ID!
+  name: String
+  familyId: ID
 }
