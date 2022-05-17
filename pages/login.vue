@@ -78,7 +78,6 @@ export default Vue.extend({
           console.log('@login#submit token: ' + token)
           Auth.setAccessToken(this.$cookies, token) // AuthプラグインでtokenをCookieに保存
           await this.createUserIfNotExist()
-          this.$router.push('/')
         } catch (e: any) {
           // 失敗時はAlertを表示
           this.$data.alertMessage = e.response?.data?.detail ?? 'Error...'
@@ -136,7 +135,7 @@ export default Vue.extend({
             familyId
           )
           if (!name || !familyId) {
-            this.$router.push({ name: 'settings' })
+            this.$router.push('/settings')
           } else {
             this.$router.push('/')
           }

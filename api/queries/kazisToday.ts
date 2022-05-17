@@ -75,22 +75,25 @@ export const kazisToday = async (_parent: any, _args: any, _context: any) => {
     )
 
     const kazis = await Promise.all(
-      kaziRef.docs.map(
-        async (doc) =>
-          ({
-            id: doc.id,
-            category: {
-              id: doc.data().categoryId,
-              name: (await doc.data().category.get()).data().name,
-            },
-            name: doc.data().name,
-            point: doc.data().point,
-            repeat: {
-              type: doc.data().repeat.type,
-              activatedAt: doc.data().repeat.activatedAt.toDate().toISOString(),
-            },
-          } as DispKazi)
-      )
+      kaziRef.docs.map(async (doc) => {
+        const dat = doc.data()
+        const categoryDocRef = dat.category
+        const categoryDoc = await categoryDocRef.get()
+        const categorySS = categoryDoc.data()
+        return {
+          id: doc.id,
+          category: {
+            id: categoryDoc.id,
+            name: categorySS.name,
+          },
+          name: doc.data().name,
+          point: doc.data().point,
+          repeat: {
+            type: doc.data().repeat.type,
+            activatedAt: doc.data().repeat.activatedAt.toDate().toISOString(),
+          },
+        } as DispKazi
+      })
     )
 
     for (const kazi of kazis) {
