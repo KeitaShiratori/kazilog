@@ -4,15 +4,31 @@ import { Timeline, User, DispKazi } from '@/types/generated/graphql'
 
 export const kazisToday = async (_parent: any, _args: any, _context: any) => {
   const uid = _context?.user?.uid
-  const resKazisToday = []
+  const resKazisToday = [] as DispKazi[]
 
   try {
     const doc = await db.collection('users').doc(uid).get()
 
     const user = doc.data() as User
+
+    if (!user) {
+      console.log('@/api/queries/kazisToday no user.', 'uid:', uid)
+      return resKazisToday
+    }
+
     const familyRef = user.family as DocumentData
 
-    // const { familyId, datetime } = _args
+    if (!familyRef) {
+      console.log(
+        '@/api/queries/kazisToday user has no family.',
+        'uid:',
+        uid,
+        'user:',
+        user
+      )
+      return resKazisToday
+    }
+
     const familyId = familyRef.id
 
     const today = new Date(Date.now())

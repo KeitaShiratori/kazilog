@@ -6,8 +6,8 @@ v-card
     WidgetAddKaziButton
   v-list(two-line)
     v-list-item-group(v-model="selected", @click="" active-class="blue--text", multiple, prevent)
-      template(v-for="(item, idx) in kazisToday")
-        v-list-item(:key="item.id" @click="handleKazi(item, idx)")
+      div(v-for="(item, idx) in kazisToday")
+        v-list-item(@click="handleKazi(item, idx)" :key="item.id")
           template(v-slot:default="{ active }")
             v-list-item-avatar
               v-img(:alt="item.name" :src="item.img || 'noimage.png'")

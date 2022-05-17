@@ -60,9 +60,9 @@ type Kazi {
 
 type DispKazi {
   id: ID!
-  familyId: ID!
-  family: Family!
-  categoryId: ID!
+  familyId: ID
+  family: Family
+  categoryId: ID
   category: Category!
   name: String!
   point: Int!
