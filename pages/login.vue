@@ -77,7 +77,7 @@ export default Vue.extend({
           const token = await this.firebaseAuthLogin(loginInfo)
           console.log('@login#submit token: ' + token)
           Auth.setAccessToken(this.$cookies, token) // AuthプラグインでtokenをCookieに保存
-          await this.createUserIfNotExist()
+          await this.createUserIfNotExist(token)
         } catch (e: any) {
           // 失敗時はAlertを表示
           this.$data.alertMessage = e.response?.data?.detail ?? 'Error...'
@@ -113,7 +113,7 @@ export default Vue.extend({
         const token = await this.signInWithGoogle()
         console.log('@login#google token: ' + token)
         Auth.setAccessToken(this.$cookies, token) // AuthプラグインでtokenをCookieに保存
-        await this.createUserIfNotExist()
+        await this.createUserIfNotExist(token)
         console.log('@/pages/login createUserIfNotExist end')
       } catch (e: any) {
         // 失敗時はAlertを表示
@@ -121,15 +121,20 @@ export default Vue.extend({
         ;(this.$refs.alert as any).open()
       }
     },
-    async createUserIfNotExist() {
+    async createUserIfNotExist(token: String) {
       console.log('@/pages/login createUserIfNotExist start')
+
       await this.$apollo.mutate({
         mutation: MLoginGql,
+        variables: {
+          token: token,
+        },
         update: (store: any, _data: { data: { login: UserAuth } }) => {
           console.log('@/pages/login update MLoginGql')
-          const { uid, name, familyId } = _data.data.login
+          const { uid, name, familyId, email } = _data.data.login
 
           this.setFamilyId(familyId)
+          this.setEmail(email)
           console.log(
             '@/pages/login createUserIfNotExist update familyId end: familyId is ',
             familyId
@@ -147,6 +152,7 @@ export default Vue.extend({
       'firebaseAuthLogin',
       'signInWithGoogle',
       'setFamilyId',
+      'setEmail',
     ]),
   },
   computed: {

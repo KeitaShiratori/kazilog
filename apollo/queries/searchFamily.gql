@@ -1,0 +1,6 @@
+query searchFamily($email: String!) {
+  searchFamily(email: $email) {
+    id
+    name
+  }
+}

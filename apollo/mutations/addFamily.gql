@@ -1,9 +1,0 @@
-mutation AddFamily($name: String!) {
-  addFamily(name: $name) {
-    id
-    name
-    users {
-      uid
-    }
-  }
-}

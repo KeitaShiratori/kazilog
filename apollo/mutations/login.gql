@@ -1,7 +1,8 @@
-mutation Login {
-  login {
+mutation Login($token: String!) {
+  login(token: $token) {
     uid
     name
     familyId
+    email
   }
 }

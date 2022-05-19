@@ -5,4 +5,5 @@ export type AuthState = {
   uid: string | null
   user: UserInfo | null
   familyId: string | null
+  email: string | null
 }

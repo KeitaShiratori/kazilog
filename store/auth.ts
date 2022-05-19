@@ -25,14 +25,13 @@ import { deepCopy } from '@/utils/myutil'
 export default class AuthStore extends VuexModule {
   private authState: AuthState = Object.assign({}, AuthStore.getDefaultState())
 
-  private static getDefaultState(): AuthState {
-    return deepCopy({
-      isLoggedIn: false,
-      uid: null,
-      user: null,
-      familyId: null,
-    })
-  }
+  private static getDefaultState = (): AuthState => ({
+    isLoggedIn: false,
+    uid: null,
+    user: null,
+    familyId: null,
+    email: null,
+  })
 
   public get isAuthenticated() {
     return !!this.authState.isLoggedIn
@@ -63,6 +62,10 @@ export default class AuthStore extends VuexModule {
   @Mutation
   private async _setFamilyId(familyId: string) {
     this.authState.familyId = familyId
+  }
+  @Mutation
+  private async _setEmail(email: string) {
+    this.authState.email = email
   }
 
   // const provider = new GoogleAuthProvider();
@@ -145,5 +148,10 @@ export default class AuthStore extends VuexModule {
   @Action({ rawError: true })
   public setFamilyId(familyId: string) {
     this._setFamilyId(familyId)
+  }
+
+  @Action({ rawError: true })
+  public setEmail(email: string) {
+    this._setEmail(email)
   }
 }
