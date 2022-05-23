@@ -1,4 +1,9 @@
-import { getFirebaseAuth } from '@/plugins/firebase'
+import {
+  getFirebaseAuth,
+  providers,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from '@/plugins/firebase'
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -20,13 +25,13 @@ import { deepCopy } from '@/utils/myutil'
 export default class AuthStore extends VuexModule {
   private authState: AuthState = Object.assign({}, AuthStore.getDefaultState())
 
-  private static getDefaultState(): AuthState {
-    return deepCopy({
-      isLoggedIn: false,
-      uid: null,
-      user: null,
-    })
-  }
+  private static getDefaultState = (): AuthState => ({
+    isLoggedIn: false,
+    uid: null,
+    user: null,
+    familyId: null,
+    email: null,
+  })
 
   public get isAuthenticated() {
     return !!this.authState.isLoggedIn
@@ -34,6 +39,14 @@ export default class AuthStore extends VuexModule {
 
   public get currentUserInfo() {
     return this.authState.user
+  }
+
+  public get hasFamilyId() {
+    return !!this.authState.familyId
+  }
+
+  public get getAuthState() {
+    return this.authState
   }
 
   @Mutation
@@ -45,6 +58,14 @@ export default class AuthStore extends VuexModule {
     this.authState.user = deepCopy(user)
     this.authState.uid = this.authState.user?.uid ?? null
     this.authState.isLoggedIn = true
+  }
+  @Mutation
+  private async _setFamilyId(familyId: string) {
+    this.authState.familyId = familyId
+  }
+  @Mutation
+  private async _setEmail(email: string) {
+    this.authState.email = email
   }
 
   // const provider = new GoogleAuthProvider();
@@ -63,10 +84,32 @@ export default class AuthStore extends VuexModule {
       )
       const user = userCredential.user
       this.logIn(user)
-      return await getIdToken(user)
+      const token = await getIdToken(user)
+      return token
     } catch (error) {
       console.log(error)
       // ログイン失敗
+    }
+  }
+
+  @Action({ rawError: true })
+  public async signInWithGoogle() {
+    const auth = getFirebaseAuth()
+    try {
+      const result = await signInWithPopup(auth, providers.google)
+      const credential = GoogleAuthProvider.credentialFromResult(result)
+      const user = result.user
+      this.logIn(user)
+      const token = await getIdToken(user)
+      return token
+    } catch (error: any) {
+      // Handle Errors here.
+      const errorCode = error.code
+      const errorMessage = error.message
+      // The email of the user's account used.
+      const email = error.email
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error)
     }
   }
 
@@ -100,5 +143,15 @@ export default class AuthStore extends VuexModule {
     uid: string
   }) {
     this.logIn(user)
+  }
+
+  @Action({ rawError: true })
+  public setFamilyId(familyId: string) {
+    this._setFamilyId(familyId)
+  }
+
+  @Action({ rawError: true })
+  public setEmail(email: string) {
+    this._setEmail(email)
   }
 }

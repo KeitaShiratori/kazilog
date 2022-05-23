@@ -1,0 +1,9 @@
+mutation JoinFamily($id: String, $name: String) {
+  joinFamily(id: $id, name: $name) {
+    id
+    name
+    users {
+      uid
+    }
+  }
+}

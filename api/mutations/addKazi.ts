@@ -43,6 +43,7 @@ export const addKazi = async (_parent: any, _args: any, _context: any) => {
     point: dat.point,
     repeat: {
       type: dat.repeat?.type,
+      // @ts-ignore
       activatedAt: dat.repeat?.activatedAt.toDate().toISOString(),
     },
   }

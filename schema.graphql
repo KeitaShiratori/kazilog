@@ -2,6 +2,8 @@ scalar Void
 
 type Query {
   family: Family
+  searchFamily(email: String): [Family]
+  familyId: FamilyId
   timelinesDoneToday: [Timeline]
   kazisRemainedToday: [Kazi]
   kazisToday: [DispKazi]
@@ -9,9 +11,10 @@ type Query {
 }
 
 type Mutation {
-  addCategory(
-    name: String
-  ): Category
+  login(token: String): UserAuth
+  updateUser(name: String): UserAuth
+  joinFamily(id: String, name: String): Family
+  addCategory(name: String): Category
   addKazi(
     name: String
     categoryId: String
@@ -34,10 +37,14 @@ type Category {
   name: String!
 }
 
+type FamilyId {
+  id: String
+}
+
 type Family {
   id: ID!
-  name: String!
-  users: [User]!
+  name: String
+  users: [User]
 }
 
 type Kazi {
@@ -53,9 +60,9 @@ type Kazi {
 
 type DispKazi {
   id: ID!
-  familyId: ID!
-  family: Family!
-  categoryId: ID!
+  familyId: ID
+  family: Family
+  categoryId: ID
   category: Category!
   name: String!
   point: Int!
@@ -81,6 +88,14 @@ type Timeline {
 
 type User {
   uid: ID!
-  name: String!
-  family: Family!
+  name: String
+  family: Family
+  email: String
+}
+
+type UserAuth {
+  uid: ID!
+  name: String
+  familyId: ID
+  email: String
 }

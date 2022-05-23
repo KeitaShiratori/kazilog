@@ -16,6 +16,7 @@ const schema = loadSchemaSync(join(__dirname, '../schema.graphql'), {
 // リゾルバーの定義 (型のサポートを受けれる)
 const resolvers: Resolvers = {
   Query: Query,
+  // @ts-ignore
   Mutation: Mutation,
 }
 

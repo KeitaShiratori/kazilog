@@ -20,7 +20,9 @@ export default class Auth {
 
   // CookieからJWTを削除
   public static removeAccessToken(cookie: NuxtCookies): void {
+    console.log('@/plugins/authCookie removeAccessToken start')
     cookie.remove(this.ACCESS_TOKEN_KEY)
+    console.log('@/plugins/authCookie removeAccessToken end')
   }
 
   // CookieからJWTを取得
