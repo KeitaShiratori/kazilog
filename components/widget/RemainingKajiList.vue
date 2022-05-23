@@ -108,7 +108,7 @@ export default Vue.extend({
           doneAt: dispKazi.doneAt ?? '',
           user: {
             uid: dispKazi.user?.uid ?? '',
-            name: dispKazi.user?.uid ?? '',
+            name: dispKazi.user?.name ?? '',
           },
           timelineId: dispKazi.timelineId ?? '',
         }
