@@ -48,7 +48,7 @@ div
 <script lang="ts">
 import Vue from 'vue'
 import MAddCategoryGql from '@/apollo/mutations/addCategory.gql'
-import QCategoriesGql from '@/apollo/queries/Categories.gql'
+import QCategoriesGql from '@/apollo/queries/categories.gql'
 import { Category } from '~/types/generated/graphql'
 interface DispCategory {
   id: String

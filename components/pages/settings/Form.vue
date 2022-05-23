@@ -218,6 +218,7 @@ export default Vue.extend({
         '@/components/pages/settings/Form computed items start',
         this.searchFamily
       )
+      // @ts-ignore
       const entries = this.searchFamily.map((f: Family) => {
         if (!f.name) return Object.assign({}, f, { Description: '' })
         const Description =
